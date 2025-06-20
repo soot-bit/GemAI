@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Diamond Price Predictor</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>💎 Diamond Price Predictor</h1>
+    <form id="predictionForm">
+      <label>Carat:</label>
+      <input type="number" id="carat" step="0.01" required><br>
+
+      <label>Cut:</label>
+      <select id="cut">
+        <option value="0">Fair</option>
+        <option value="1">Good</option>
+        <option value="2">Very Good</option>
+        <option value="3">Premium</option>
+        <option value="4">Ideal</option>
+      </select><br>
+
+      <label>Color:</label>
+      <select id="color">
+        <option value="0">J</option>
+        <option value="1">I</option>
+        <option value="2">H</option>
+        <option value="3">G</option>
+        <option value="4">F</option>
+        <option value="5">E</option>
+        <option value="6">D</option>
+      </select><br>
+
+      <label>Clarity:</label>
+      <select id="clarity">
+        <option value="0">I1</option>
+        <option value="1">SI2</option>
+        <option value="2">SI1</option>
+        <option value="3">VS2</option>
+        <option value="4">VS1</option>
+        <option value="5">VVS2</option>
+        <option value="6">VVS1</option>
+        <option value="7">IF</option>
+      </select><br>
+
+      <label>Depth:</label>
+      <input type="number" id="depth" step="0.01" required><br>
+
+      <label>Table:</label>
+      <input type="number" id="table" step="0.01" required><br>
+
+      <label>X (Length in mm):</label>
+      <input type="number" id="x" step="0.01" required><br>
+
+      <label>Y (Width in mm):</label>
+      <input type="number" id="y" step="0.01" required><br>
+
+      <label>Z (Depth in mm):</label>
+      <input type="number" id="z" step="0.01" required><br>
+
+      <button type="submit">Predict</button>
+    </form>
+
+    <p id="result"></p>
+  </div>
+<script>
+  document.getElementById("predictionForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const data = {
+      carat: parseFloat(document.getElementById("carat").value),
+      cut: parseInt(document.getElementById("cut").value),
+      color: parseInt(document.getElementById("color").value),
+      clarity: parseInt(document.getElementById("clarity").value),
+      depth: parseFloat(document.getElementById("depth").value),
+      table: parseFloat(document.getElementById("table").value),
+      x: parseFloat(document.getElementById("x").value),
+      y: parseFloat(document.getElementById("y").value),
+      z: parseFloat(document.getElementById("z").value)
+    };
+
+    try {
+      const response = await fetch("/predict", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        document.getElementById("result").innerText = `Error: ${error}`;
+        return;
+      }
+
+      const result = await response.json();
+
+      function formatCurrency(value, currency) {
+        return value.toLocaleString(undefined, {
+          style: "currency",
+          currency: currency,
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      }
+
+      document.getElementById("result").innerHTML = `
+      💎 Predicted Price:<br>
+      USD: ${formatCurrency(result.price_usd, "USD")}<br>
+      BWP: P ${result.price_bwp.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })}<br>
+    `;
+
+
+    } catch (err) {
+      document.getElementById("result").innerText = `Error: ${err.message}`;
+    }
+  });
+</script>
+
+</body>
+
+</html>
