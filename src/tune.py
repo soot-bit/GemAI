@@ -64,11 +64,11 @@ def objective(trial):
         X_train=X_train, y_train=y_train,
         eval_set=[(X_val, y_val)],
         eval_metric=['mae'],
-        max_epochs=2,
+        max_epochs=100,
         patience=7,
         batch_size=training_params["batch_size"],
         virtual_batch_size=128,
-        num_workers=0,
+        num_workers=4,
         drop_last=False
     )
     
@@ -97,7 +97,7 @@ def main():
         print(f"    {key}: {value}")
     
     # Save best params
-    save_pickle(trial.params, get_path("processed_dir", config) / 'best_params.pkl')
+    pickle_(trial.params, get_path("processed_dir", config) / 'best_params.pkl')
     
     print("✅ Hyperparameter tuning complete!")
 

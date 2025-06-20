@@ -36,7 +36,7 @@ def main():
         max_epochs=config["training"]["max_epochs"],
         patience=config["training"]["patience"],
         batch_size=config["training"]["batch_size"],
-        num_workers=0,
+        num_workers=4,
         drop_last=False,
         loss_fn=torch.nn.functional.mse_loss
     )
