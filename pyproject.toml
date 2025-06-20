@@ -10,6 +10,7 @@ dependencies = [
     "optuna>=4.4.0",
     "pandas>=2.3.0",
     "pyarrow>=20.0.0",
+    "pydantic-settings>=2.9.1",
     "pytorch-tabnet>=4.1.0",
     "scipy>=1.15.3",
     "seaborn>=0.13.2",
