@@ -18,15 +18,15 @@ target = "price_bwp"
 exchange_rate = 13.5
 
 [hparams]
-n_d = 16
-n_a = 16
-n_steps = 5
-gamma = 1.5
-cat_emb_dim = 3
-mask_type = "sparsemax"
+n_d = 50
+n_a = 56
+n_steps = 9
+gamma = 1.329
+cat_emb_dim = 15  
+mask_type = "entmax"
 
 [hparams.optimizer_params]
-lr=0.02
+lr=0.0466
 
 
 
@@ -34,5 +34,5 @@ lr=0.02
 seed = 42
 test_size = 0.2
 batch_size = 2048
-max_epochs = 10
+max_epochs = 100
 patience = 10
