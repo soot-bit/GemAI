@@ -1,38 +1,32 @@
 [paths]
-data_dir = "Data"
-raw_data = "diamonds.csv"
+train_csv = "Data/diamonds.csv"
 processed_dir = "Data/processed"
-train_data = "train.parquet"
-test_data = "test.parquet"
-model = "tabnet_model"
-feature_metadata = "feature_metadata.pkl"
-scaler = "scaler.pkl"
-training_history = "training_history.pkl"
-training_plot = "training_plot.png"
-feature_importance = "feature_importance.csv"
+models = "models"
 
 [features]
-categorical = ["cut", "color", "clarity"]
-numerical = ["carat", "depth", "table", "x", "y", "z"]
-target = "price_bwp"
-exchange_rate = 13.5
+categorical = [ "cut", "color", "clarity",]
+numerical = [ "carat", "depth", "table", "x", "y", "z",]
+target = "price"
 
-[hparams]
-n_d = 50
-n_a = 56
-n_steps = 9
-gamma = 1.329
-cat_emb_dim = 15  
+[model]
+checkpoint = "models/tabnet_model"
+
+[model.init]
+n_d = 32
+n_a = 43
+n_steps = 5
+gamma = 1.254584765120671
+lambda_sparse = 0.0002279216849417837
 mask_type = "entmax"
+cat_emb_dim = 3
 
-[hparams.optimizer_params]
-lr=0.0466
-
-
-
-[training]
-seed = 42
-test_size = 0.2
-batch_size = 2048
+[model.fit]
 max_epochs = 100
 patience = 10
+num_workers = 4
+batch_size = 2048
+virtual_batch_size = 256
+drop_last = false
+
+[model.init.optimizer_params]
+lr = 0.019811397709919246
