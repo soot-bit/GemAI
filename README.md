@@ -28,7 +28,7 @@ I built GemAI out of pure curiosity, I wanted to play with Google's TabNet model
   
 - **tuning:** - Finding the right hyperparameters was like trying to find the perfect diamond cut - lots of trial and error, but worth it when you get it right!
 
-- **GPU Acceleartion:**  Night and day difference from CPU *chef's kiss*.
+- **GPU Acceleartion:**  Night and day difference ...
 
 I'd say TabNet  is on par with good old traditional ML for this kind of data (eg.  XGBoost or Random Forests ...) It's another tool in the toolbox with its own strengths. I guess the real selling point is X-AI which i have to agree with the feature importance.
 
