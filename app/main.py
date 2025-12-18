@@ -1,87 +1,79 @@
+import sys
+import pickle
+from pathlib import Path
+import numpy as np
+import pandas as pd
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
-from pathlib import Path
 from pytorch_tabnet.tab_model import TabNetRegressor
-import numpy as np
 
-from src.config import settings
-import utils
+# Add src to path to allow importing GemAI modules
+# This is a common pattern for standalone apps within a larger project
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+sys.path.append(str(PROJECT_ROOT))
 
-# ─── Load config ─────────────────────────────────────────
-FEATURES   = settings.features
-MODEL_CONF = settings.model
-BASE_DIR   = Path(__file__).resolve().parent
+from src.GemAI.config import settings, get_project_root
 
-# ─── Load artifacts ──────────────────────────────────────
-model_ckpt = utils.get_path(MODEL_CONF["checkpoint"]).with_suffix(".zip")
-encoder    = utils.unpickle_(settings.paths["models"] + "/encoder.pkl")
-scaler     = utils.unpickle_(settings.paths["models"] + "/scaler.pkl")
+# --- Load artifacts -------------------------------------------------
+# Use paths from the centralized config
+MODEL_DIR = get_project_root() / settings.paths.tabnet_dir
+model_path = MODEL_DIR / "tabnet_model.zip"
+mappings_path = MODEL_DIR / "cat_mappings.pkl"
+
+if not model_path.exists() or not mappings_path.exists():
+    print("Error: Model or mappings not found. Train a model first using 'uv run python -m src.GemAI.main train tabnet'")
+    sys.exit(1)
 
 tabnet = TabNetRegressor()
-tabnet.load_model(model_ckpt)
+tabnet.load_model(str(model_path))
 
-# ─── FastAPI setup ───────────────────────────────────────
-app = FastAPI(title="Diamond Price Predictor")
+with open(mappings_path, 'rb') as f:
+    cat_mappings = pickle.load(f)
 
-# Static & template paths
-app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
-templates = Jinja2Templates(directory=BASE_DIR / "templates")
+# --- FastAPI setup --------------------------------------------------
+app = FastAPI(title="GemAI Diamond Price Predictor")
+app.mount("/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static")
+templates = Jinja2Templates(directory=Path(__file__).parent / "templates")
 
-# ─── Pydantic Schemas ────────────────────────────────────
-
+# --- Pydantic Schemas -----------------------------------------------
 class DiamondInput(BaseModel):
     carat: float
-    cut: int
-    color: int
-    clarity: int
+    cut: str
+    color: str
+    clarity: str
     depth: float
     table: float
     x: float
     y: float
     z: float
 
-
-
-
-
 class PredictResponse(BaseModel):
-    price: float
+    price_bwp: float
 
-# ─── Routes ──────────────────────────────────────────────
+# --- Routes ---------------------------------------------------------
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-# Mappings from integer code to original strings the encoder expects
-cut_map_inv = {0: "Fair", 1: "Good", 2: "Very Good", 3: "Premium", 4: "Ideal"}
-color_map_inv = {0: "J", 1: "I", 2: "H", 3: "G", 4: "F", 5: "E", 6: "D"}
-clarity_map_inv = {0: "I1", 1: "SI2", 2: "SI1", 3: "VS2", 4: "VS1", 5: "VVS2", 6: "VVS1", 7: "IF"}
-USD_TO_BWP = 13.5  # update with current rate
-@app.post("/predict")
+@app.post("/predict", response_model=PredictResponse)
 def predict(data: DiamondInput):
-    # Convert integers back to strings before encoding
-    cut_str = cut_map_inv.get(data.cut)
-    color_str = color_map_inv.get(data.color)
-    clarity_str = clarity_map_inv.get(data.clarity)
+    # Create a single-row DataFrame from the input
+    # The column order is implicitly handled by Pydantic and DataFrame creation
+    input_df = pd.DataFrame([data.model_dump()])
 
-    categorical = [[cut_str, color_str, clarity_str]]
-    numerical = [[data.carat, data.depth, data.table, data.x, data.y, data.z]]
+    # Apply the same categorical dtypes from training
+    for col, dtype in cat_mappings.items():
+        if col in input_df.columns:
+            input_df[col] = input_df[col].astype(dtype)
 
-    X_cat_enc = encoder.transform(categorical)  # now encoding strings
-    X_num_scaled = scaler.transform(numerical)
+    # Convert dataframe to a float32 numpy array for the model
+    X = input_df.values.astype(np.float32)
 
-    X = np.hstack([X_cat_enc, X_num_scaled])
-    prediction = tabnet.predict(X)[0]   # use your loaded TabNet model
+    # Get prediction
+    prediction = tabnet.predict(X)
+    price_bwp = float(prediction[0][0])
 
-    prediction_usd = float(tabnet.predict(X)[0])
-    prediction_bwp = prediction_usd * USD_TO_BWP
-
-    return {
-        "price_usd": round(prediction_usd, 2),
-        "price_bwp": round(prediction_bwp, 2)
-    }
-
-
+    return {"price_bwp": round(price_bwp, 2)}

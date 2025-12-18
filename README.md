@@ -1,6 +1,4 @@
-
-
-
+  
 <div align="center">
 <h1 style="display: flex; align-items: center; gap: 10px;">
   <img src="https://4vector.com/i/free-vector-diamant-diamond_100183_Diamant_diamond.png" alt="Diamond icon" style="width: 40px; height: 40px;">
@@ -41,7 +39,7 @@ I'd say TabNet  is on par with good old traditional ML for this kind of data (eg
 
 - **High Accuracy Predictions**: Trained on 50k+ diamond samples
 - Automated tuning with Optuna
-- **Low lantency Inference**: prediction latency
+- **Low latency Inference**: prediction latency
 - **Interactive Web UI**
 - **RESTful APIs** 
 - **Production-ready API with FastAPI**
@@ -65,27 +63,107 @@ Comprehensive analysis of diamond features and their relationships:
 
 *Click image to view full analysis notebook*
 
-## ⚙️ Use:
+## 📁 Project Structure
 
-*use uv preferably but pip still works*, [uv documentation](https://docs.astral.sh/uv/)
+The project has been refactored for better organization, maintainability, and a CLI-first workflow.
+
+```
+/
+├── app/                  # FastAPI application for serving the model
+├── configs/              # All configuration files (e.g., config.toml)
+├── data/                 # Data storage
+│   ├── raw/              # Raw, immutable datasets
+│   └── processed/        # Cleaned and processed datasets
+├── models/               # Saved model artifacts and preprocessing mappings
+├── notebooks/            # Jupyter notebooks for exploration and analysis
+├── src/                  # Source code for the project
+│   └── GemAI/            # Main Python package for GemAI
+│       ├── config.py     # Centralized configuration loading
+│       ├── data.py       # Data loading utilities
+│       ├── main.py       # Main Command Line Interface (CLI) entry point
+│       ├── utils.py      # General utility functions (e.g., logging)
+│       └── models/       # Package for model-related modules
+│           ├── autogluon.py  # AutoGluon training logic
+│           └── tabnet.py     # TabNet training and tuning logic
+├── tests/                # Unit and integration tests
+├── pyproject.toml        # Project metadata and dependencies (managed by uv)
+└── README.md             # This file
+```
+
+## ⚙️ Workflow and Usage
+
+This project is managed via a centralized command-line interface (CLI). The recommended workflow is outlined below.
+
+### 1. Setup
+
+First, clone the repository and install the required dependencies using `uv`.
 
 ```bash
-# Clone 
-git clone https://github.com/yourusername/GemAI.git
+# Clone the repository
+git clone https://github.com/your-username/GemAI.git
 cd GemAI
 
-# in a  virtual environment
-pip install uv 
-uv install .
+# Install main and development dependencies using uv
+# (Ensure uv is installed: pip install uv)
+uv install .[dev]
 ```
 
-**Run  Server**
+### 2. Data Preprocessing
+
+Generate the cleaned dataset from the raw `diamonds.csv` file. This script will perform all the cleaning steps from the EDA notebook and save the output to `data/processed/clean_ds.plk`.
+
 ```bash
-uvicorn app.main:app --reload
+uv run python -m src.GemAI.main process-data
 ```
-Visit `http://localhost:8000` in your browser
 
-**API Request**
+### 3. Hyperparameter Tuning (Optional but Recommended)
+
+Run Optuna to find the best hyperparameters for the TabNet model. The results will be saved back into `configs/config.toml` for the training step.
+
+```bash
+uv run python -m src.GemAI.main tune tabnet
+```
+
+### 4. Model Training
+
+Train the model using the hyperparameters from your configuration file.
+
+```bash
+# To train the TabNet model (uses parameters from tune step)
+uv run python -m src.GemAI.main train tabnet
+
+# To train the AutoGluon model
+uv run python -m src.GemAI.main train autogluon
+```
+The trained TabNet model and its preprocessing mappings will be saved in the `models/tabnet/` directory.
+
+### 5. Serving the Prediction API
+
+Launch the FastAPI application to serve predictions. The API uses the latest trained TabNet model from the previous step.
+
+```bash
+uv run python -m src.GemAI.main serve
+```
+- The API will be available at `http://localhost:8000`.
+- The interactive web GUI is at `/`.
+- The interactive API documentation (Swagger UI) is at `/docs`.
+
+### 6. Testing the API
+
+The project includes a set of API tests. These tests require the server to be running in a separate terminal.
+
+```bash
+# In one terminal, start the server:
+uv run python -m src.GemAI.main serve
+
+# In another terminal, run pytest:
+uv run pytest
+```
+
+### API Request Example
+
+You can interact with the running API using `curl` or any HTTP client.
+
 ```bash
 curl -X POST "http://localhost:8000/predict" \
 -H "Content-Type: application/json" \
@@ -101,30 +179,12 @@ curl -X POST "http://localhost:8000/predict" \
     "z": 3.55
 }'
 ```
-or use web GUI
-
-## 📚 Documentation
-
-### API Endpoints
-| Endpoint       | Method | Description               | Request Body                                   |
-|----------------|--------|---------------------------|-----------------------------------------------|
-| `/predict`     | POST   | Get price prediction      | JSON with diamond features                    |
-| `/`            | GET    | Web interface             | -                                             |
-| `/docs`        | GET    | Interactive API docs      | -                                             |
-
-### Input Parameters
+**Expected Response:**
 ```json
 {
-  "carat": 0.75,
-  "cut": "Ideal",
-  "color": "D",
-  "clarity": "IF",
-  "depth": 62.1,
-  "table": 57,
-  "x": 5.71,
-  "y": 5.73,
-  "z": 3.55
+  "price_bwp": 12345.67
 }
-
 ```
+*(The price is an example and will vary based on the trained model.)*
+
 

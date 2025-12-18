@@ -1,28 +1,35 @@
 [project]
 name = "gemai"
-version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
-requires-python = ">=3.12"
+version = "1.1.0"
+description = "A project to evaluate TabNet and other models for diamond price forecasting."
+authors = [{name = "soot-bit"}]
+requires-python = ">=3.11"
+license = {text = "MIT"}
+
+# Dependencies will be managed here by uv
 dependencies = [
-    "fastapi[standard]>=0.115.13",
-    "matplotlib>=3.10.3",
-    "nbconvert>=7.16.6",
-    "numpy>=2.3.0",
-    "optuna>=4.4.0",
-    "pandas>=2.3.0",
-    "pandas-profiling>=3.2.0",
-    "plotly>=6.1.2",
-    "pyarrow>=20.0.0",
-    "pydantic-settings>=2.9.1",
+    "autogluon>=1.4.0",
+    "matplotlib>=3.10.8",
+    "pandas>=2.3.3",
     "pytorch-tabnet>=4.1.0",
-    "scipy>=1.15.3",
+    "scikit-learn>=1.7.2",
     "seaborn>=0.13.2",
-    "streamlit>=1.46.0",
     "toml>=0.10.2",
+    "tomli>=2.0.1",
 ]
+
+[tool.setuptools.packages.find]
+where = ["src"] 
+
+[project.scripts]
+gemai = "src.GemAI.main:main"
+
+[tool.uv]
 
 [dependency-groups]
 dev = [
-    "ipykernel>=6.29.5",
+    "ipykernel>=7.1.0",
+    "pytest>=8.0.0",
+    "httpx>=0.26.0",
 ]
+# This section can be used for uv-specific configurations if needed

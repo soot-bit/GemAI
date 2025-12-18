@@ -11,118 +11,62 @@
     <h1>💎 Diamond Price Predictor</h1>
     <form id="predictionForm">
       <label>Carat:</label>
-      <input type="number" id="carat" step="0.01" required><br>
+      <input type="number" id="carat" step="0.01" value="0.7" required><br>
 
       <label>Cut:</label>
       <select id="cut">
-        <option value="0">Fair</option>
-        <option value="1">Good</option>
-        <option value="2">Very Good</option>
-        <option value="3">Premium</option>
         <option value="4">Ideal</option>
+        <option value="3">Premium</option>
+        <option value="2">Very Good</option>
+        <option value="1">Good</option>
+        <option value="0">Fair</option>
       </select><br>
 
       <label>Color:</label>
       <select id="color">
-        <option value="0">J</option>
-        <option value="1">I</option>
-        <option value="2">H</option>
-        <option value="3">G</option>
-        <option value="4">F</option>
-        <option value="5">E</option>
         <option value="6">D</option>
+        <option value="5">E</option>
+        <option value="4">F</option>
+        <option value="3">G</option>
+        <option value="2">H</option>
+        <option value="1">I</option>
+        <option value="0">J</option>
       </select><br>
 
       <label>Clarity:</label>
       <select id="clarity">
-        <option value="0">I1</option>
-        <option value="1">SI2</option>
-        <option value="2">SI1</option>
-        <option value="3">VS2</option>
-        <option value="4">VS1</option>
-        <option value="5">VVS2</option>
-        <option value="6">VVS1</option>
         <option value="7">IF</option>
+        <option value="6">VVS1</option>
+        <option value="5">VVS2</option>
+        <option value="4">VS1</option>
+        <option value="3">VS2</option>
+        <option value="2">SI1</option>
+        <option value="1">SI2</option>
+        <option value="0">I1</option>
       </select><br>
 
       <label>Depth:</label>
-      <input type="number" id="depth" step="0.01" required><br>
+      <input type="number" id="depth" step="0.01" value="61.5" required><br>
 
       <label>Table:</label>
-      <input type="number" id="table" step="0.01" required><br>
+      <input type="number" id="table" step="0.01" value="57.0" required><br>
 
       <label>X (Length in mm):</label>
-      <input type="number" id="x" step="0.01" required><br>
+      <input type="number" id="x" step="0.01" value="5.7" required><br>
 
       <label>Y (Width in mm):</label>
-      <input type="number" id="y" step="0.01" required><br>
+      <input type="number" id="y" step="0.01" value="5.7" required><br>
 
       <label>Z (Depth in mm):</label>
-      <input type="number" id="z" step="0.01" required><br>
+      <input type="number" id="z" step="0.01" value="3.5" required><br>
 
       <button type="submit">Predict</button>
     </form>
 
-    <p id="result"></p>
+    <div id="loader" class="loader" style="display: none;"></div>
+    <div id="result" class="result-card" style="display: none;"></div>
   </div>
-<script>
-  document.getElementById("predictionForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
-
-    const data = {
-      carat: parseFloat(document.getElementById("carat").value),
-      cut: parseInt(document.getElementById("cut").value),
-      color: parseInt(document.getElementById("color").value),
-      clarity: parseInt(document.getElementById("clarity").value),
-      depth: parseFloat(document.getElementById("depth").value),
-      table: parseFloat(document.getElementById("table").value),
-      x: parseFloat(document.getElementById("x").value),
-      y: parseFloat(document.getElementById("y").value),
-      z: parseFloat(document.getElementById("z").value)
-    };
-
-    try {
-      const response = await fetch("/predict", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      });
-
-      if (!response.ok) {
-        const error = await response.text();
-        document.getElementById("result").innerText = `Error: ${error}`;
-        return;
-      }
-
-      const result = await response.json();
-
-      function formatCurrency(value, currency) {
-        return value.toLocaleString(undefined, {
-          style: "currency",
-          currency: currency,
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        });
-      }
-
-      document.getElementById("result").innerHTML = `
-      💎 Predicted Price:<br>
-      USD: ${formatCurrency(result.price_usd, "USD")}<br>
-      BWP: P ${result.price_bwp.toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      })}<br>
-    `;
-
-
-    } catch (err) {
-      document.getElementById("result").innerText = `Error: ${err.message}`;
-    }
-  });
-</script>
-
+<script src="/static/script.js"></script>
 </body>
 
 </html>
