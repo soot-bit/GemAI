@@ -1,8 +1,7 @@
 import pickle
 import numpy as np
 import pandas as pd
-from pathlib import Path
-from .config import settings, get_project_root
+from .config import config, get_project_root
 from . import utils
 from sklearn.model_selection import train_test_split
 
@@ -18,7 +17,7 @@ def run_preprocessing():
     utils.logger.info("Starting data preprocessing...")
 
     # 1. Load raw data
-    raw_data_path = get_project_root() / settings.paths.raw_data
+    raw_data_path = get_project_root() / config.paths.raw_data
     df = pd.read_csv(raw_data_path)
     if "Unnamed: 0" in df.columns:
         df = df.drop(columns="Unnamed: 0")
@@ -28,7 +27,7 @@ def run_preprocessing():
     df["price_bwp"] = (df["price"] * 13.5).round(2).astype("float32")
     df["volume"] = (df["x"] * df["y"] * df["z"]).astype("float32")
 
-    for col in settings.data.categorical_features:
+    for col in config.data.categorical_features:
         df[col] = df[col].astype("category")
 
     # 3. Filter invalid data
@@ -36,7 +35,7 @@ def run_preprocessing():
     utils.logger.info(f"Shape after removing zero-volume entries: {df_filtered.shape}")
 
     # 4. Remove outliers
-    numeric_cols = settings.data.numerical_features
+    numeric_cols = config.data.numerical_features
     Q1 = df_filtered[numeric_cols].quantile(0.25)
     Q3 = df_filtered[numeric_cols].quantile(0.75)
     IQR = Q3 - Q1
@@ -51,9 +50,9 @@ def run_preprocessing():
 
     # 5. Split and save data
     train_df, test_df = train_test_split(
-        df_clean, test_size=0.2, random_state=settings.training.random_state
+        df_clean, test_size=0.2, random_state=config.training.random_state
     )
-    processed_data_path = get_project_root() / settings.data.dir
+    processed_data_path = get_project_root() / config.paths.dir / config.paths.processed_data
     processed_data_path.parent.mkdir(parents=True, exist_ok=True)
     with open(processed_data_path, "wb") as f:
         pickle.dump({"train": train_df, "test": test_df}, f)
@@ -68,7 +67,7 @@ def load_split_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     Loads the pre-split training and validation data from the processed data directory.
     """
-    processed_data_path = get_project_root() / settings.data.dir
+    processed_data_path = get_project_root() / config.paths.dir / config.paths.processed_data
     if not processed_data_path.exists():
         raise FileNotFoundError(
             f"Processed data not found at {processed_data_path}. "
@@ -88,8 +87,8 @@ def prepare_tabnet_data(train_df: pd.DataFrame, val_df: pd.DataFrame) -> tuple:
     - Converts categorical columns to integer codes and creates mappings for inference.
     - Returns data as float32 numpy arrays.
     """
-    target = settings.data.target
-    categorical_features = settings.data.categorical_features
+    target = config.data.target
+    categorical_features = config.data.categorical_features
 
     y_train = train_df[target].values.reshape(-1, 1)
     X_train = train_df.drop(target, axis=1)
@@ -97,7 +96,7 @@ def prepare_tabnet_data(train_df: pd.DataFrame, val_df: pd.DataFrame) -> tuple:
     X_val = val_df.drop(target, axis=1)
 
     # Ensure column order is consistent for TabNet
-    all_features_except_target = X_train.columns.tolist()
+
 
     cat_idxs = [X_train.columns.get_loc(col) for col in categorical_features]
     cat_dims = []

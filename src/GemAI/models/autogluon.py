@@ -1,6 +1,6 @@
 from autogluon.tabular import TabularPredictor, TabularDataset
 
-from ..config import settings, get_project_root
+from ..config import config, get_project_root
 from ..data import load_split_data
 from .. import utils
 
@@ -16,7 +16,7 @@ def run_autogluon_training():
     val_data = TabularDataset(val_df)
     utils.logger.info("Data prepared.")
 
-    model_dir = get_project_root() / settings.paths.autogluon_dir
+    model_dir = get_project_root() / config.paths.log_dir / config.autogluon.dir
 
     predictor = TabularPredictor(
         label="price_bwp",
@@ -26,7 +26,7 @@ def run_autogluon_training():
         train_data,
         presets="best_quality",
         auto_stack=False,
-        time_limit=settings.autogluon.time_limit,
+        time_limit=config.autogluon.time_limit,
     )
 
     utils.logger.info(

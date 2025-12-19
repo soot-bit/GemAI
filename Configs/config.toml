@@ -1,19 +1,27 @@
 [data]
+target = "price"
 categorical_features = [ "cut", "color", "clarity",]
 numerical_features = [ "carat", "depth", "table", "volume",]
+
+[paths]
 dir = "Data"
+raw_data = "diamonds.csv"
+processed_data = "clean_ds.plk"
+log_dir = "Logs"
 
 [training]
 random_state = 42
 
 [autogluon]
 time_limit = 60
+dir = "Autogluon"
 
 [tabnet]
 max_epochs = 100
 patience = 10
 batch_size = 1024
 virtual_batch_size = 128
+dir = "Tabnet"
 
 [optuna]
 n_trials = 50

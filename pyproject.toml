@@ -9,6 +9,7 @@ license = {text = "MIT"}
 # Dependencies will be managed here by uv
 dependencies = [
     "autogluon>=1.4.0",
+    "black>=25.12.0",
     "matplotlib>=3.10.8",
     "pandas>=2.3.3",
     "pytorch-tabnet>=4.1.0",
@@ -18,11 +19,11 @@ dependencies = [
     "tomli>=2.0.1",
 ]
 
-[tool.setuptools.packages.find]
-where = ["src"] 
+[tool.setuptools]
+packages = {find = { where = ["src"]}} 
 
 [project.scripts]
-gemai = "src.GemAI.main:main"
+gemai = "GemAI.main:main"
 
 [tool.uv]
 
