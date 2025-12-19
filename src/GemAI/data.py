@@ -14,14 +14,15 @@ def run_preprocessing():
     split dataset to the processed data directory. This is the entrypoint
     for the 'process-data' CLI command.
     """
-    utils.logger.info("Starting data preprocessing...")
+    utils.log_rule("DATA PREPROCESSING")
+    utils.log_info("Starting data preprocessing...")
 
     # 1. Load raw data
     raw_data_path = get_project_root() / config.paths.raw_data
     df = pd.read_csv(raw_data_path)
     if "Unnamed: 0" in df.columns:
         df = df.drop(columns="Unnamed: 0")
-    utils.logger.info(f"Loaded raw data with shape: {df.shape}")
+    utils.log_info(f"Loaded raw data with shape: {df.shape}")
 
     # 2. Basic feature engineering and type conversion
     df["price_bwp"] = (df["price"] * 13.5).round(2).astype("float32")
@@ -32,7 +33,7 @@ def run_preprocessing():
 
     # 3. Filter invalid data
     df_filtered = df[df["volume"] > 0].copy()
-    utils.logger.info(f"Shape after removing zero-volume entries: {df_filtered.shape}")
+    utils.log_info(f"Shape after removing zero-volume entries: {df_filtered.shape}")
 
     # 4. Remove outliers
     numeric_cols = config.data.numerical_features
@@ -46,18 +47,21 @@ def run_preprocessing():
         & (df_filtered[numeric_cols] <= upper_bound)
     ).all(axis=1)
     df_clean = df_filtered[mask]
-    utils.logger.info(f"Shape after removing outliers: {df_clean.shape}")
+    utils.log_info(f"Shape after removing outliers: {df_clean.shape}")
 
     # 5. Split and save data
     train_df, test_df = train_test_split(
         df_clean, test_size=0.2, random_state=config.training.random_state
     )
-    processed_data_path = get_project_root() / config.paths.dir / config.paths.processed_data
+    processed_data_path = (
+        get_project_root() / config.paths.dir / config.paths.processed_data
+    )
     processed_data_path.parent.mkdir(parents=True, exist_ok=True)
     with open(processed_data_path, "wb") as f:
         pickle.dump({"train": train_df, "test": test_df}, f)
 
-    utils.logger.info(f"Processed data saved to: {processed_data_path}")
+    utils.log_info(f"Processed data saved to: {processed_data_path}")
+    utils.log_rule("DATA PREPROCESSING COMPLETED")
 
 
 # --- Data Loading and Preparation for Models ---
@@ -67,7 +71,9 @@ def load_split_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     Loads the pre-split training and validation data from the processed data directory.
     """
-    processed_data_path = get_project_root() / config.paths.dir / config.paths.processed_data
+    processed_data_path = (
+        get_project_root() / config.paths.dir / config.paths.processed_data
+    )
     if not processed_data_path.exists():
         raise FileNotFoundError(
             f"Processed data not found at {processed_data_path}. "
@@ -96,7 +102,6 @@ def prepare_tabnet_data(train_df: pd.DataFrame, val_df: pd.DataFrame) -> tuple:
     X_val = val_df.drop(target, axis=1)
 
     # Ensure column order is consistent for TabNet
-
 
     cat_idxs = [X_train.columns.get_loc(col) for col in categorical_features]
     cat_dims = []
