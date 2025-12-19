@@ -1,10 +1,9 @@
-  
 <div align="center">
 <h1 style="display: flex; align-items: center; gap: 10px;">
   <img src="https://4vector.com/i/free-vector-diamant-diamond_100183_Diamant_diamond.png" alt="Diamond icon" style="width: 40px; height: 40px;">
-  GemAI
+  GemAI - Diamond Price Predictor
 </h1>
-<p>An end-to-end solution for diamond price prediction using deep learning on tabular data.</p>
+<p>An end-to-end solution for diamond price prediction using deep learning on tabular data, featuring a modern web interface and robust API.</p>
 
   <img src="https://img.shields.io/badge/Predictor-Diamonds-blueviolet" />
   <img src="https://img.shields.io/badge/Model-TabNet-red" />
@@ -13,10 +12,12 @@
   <img src="https://img.shields.io/badge/License-MIT-blue" />
 </div>
 
-
 ## 🔮 The Story Behind GemAI
 
-I built GemAI out of pure curiosity, I wanted to play with Google's TabNet model and see how deep learning could handle structured tabular data (something we usually throw XGBoost at). Turns out, it's pretty good ...
+I built GemAI out of pure curiosity, I wanted to play with Google's [TabNet](https://arxiv.org/pdf/1908.07442) model  and see how deep learning could handle structured tabular data (something we usually throw XGBoost at). Turns out, it's not too shaby... 
+
+  I use [Autogluon](https://github.com/autogluon/autogluon?tab=readme-ov-file) as a benchmark for classical ML models because of its high accuracy and auto tuning. I wanted to compare the strongest classical models against Tabnet. Autogluon was developed by AWS AI to automates ML tasks, with just a few lines of code, you can train and deploy high-accuracy machine learning and deep learning models on image, text, time series, and tabular data.
+
 
 *Why diamonds?* Well, they're kind of a big deal where I'm from - not just sparkly rocks but serious business. This project let me combine my interest in deep learning with something culturally relevant.
 
@@ -28,163 +29,119 @@ I built GemAI out of pure curiosity, I wanted to play with Google's TabNet model
 
 - **GPU Acceleartion:**  Night and day difference ...
 
-I'd say TabNet  is on par with good old traditional ML for this kind of data (eg.  XGBoost or Random Forests ...) It's another tool in the toolbox with its own strengths. I guess the real selling point is X-AI which i have to agree with the feature importance.
+I'd say TabNet  is a not as good as good-old traditional ML for this kind of task and data (eg.  XGBoost or Random Forests ...) It's another tool in the toolbox with its own strengths. I guess the real selling point is X-AI which i have to agree with the feature importance.
+
+
+**Features**
+
+- **High Accuracy Predictions**: Trained on 50K samples + Low latency Inference via fastapi API build.
+- Automated hyperparameter tuning with Optuna.
+- **Web UI**: Modern, responsive, and user-friendly interface for predictions.
+- **Clear Feature Descriptions**: Tooltips provide detailed explanations for each input parameter.
+
+
+## 🚀 Getting Started
+
+Follow these steps to get GemAI up and running on your local machine.
+
+### Prerequisites
+
+This project uses `uv` for dependency management, which is a fast and modern Python package installer and resolver.
+
+1.  **Install `uv`:**
+
+    If you don't have `uv` installed, you can install it using `pip`:
+    ```bash
+    pip install uv
+    ```
+    For detailed installation instructions, refer to the [uv documentation](https://astral.sh/uv/tutorial/).
+
+### Installation
+
+1.  **Clone**
+    ```bash
+    git clone https://github.com/your-repo/GemAI.git
+    cd GemAI
+    ```
+
+2.  **sync**
+
+    `uv sync` will create a virtual environment and install all dependencies defined in `pyproject.toml`, including `gemai` in editable mode.
+    ```bash
+    uv sync
+    source .venv/bin/activate 
+    <!-- uv pip install -e . # add 'gemai" module -->
+    ```
+
+3.  **Verify `gemai` CLI:**
+
+    You can now use the `gemai` command-line interface. Run `uv run gemai --help` to see available commands:
+    ```bash
+    uv run gemai --help
+    ```
+    This will output something similar to:
+
+    ![gem_cli](Logs/gemai_sample.png)
+
+## Usage
+
+### Data Preprocessing and EDA
+Exploratory data analysis was done,you can look at [notebook](notebooks/EDA.ipynb). It details all cleaning steps and their justficiation and comprehensive data analysis, showing some correlation between variables and those  good stuff. The cleaned data is serialised under Data dir along with the dataset `diamonds.csv`. Look at `config.toml`   file data section. I have bundled all of this process into a python fuction that can be ran from cli with `gemai process-data` it will do the whole process of cleaning and searialising in the notebook.
+![eda](Logs/output.png)
+```bash
+uv run gemai process-data
+```
+This will generate `Data/clean_ds.plk`.
 
 
 
+### 2. Model Training
 
-![Web App Preview](./app/web_app.png)
+Train the TabNet model. This will also generate the necessary `cat_mappings.pkl` file, crucial for inference.
+```bash
+uv run gemai train tabnet # or autogluon
+```
+*(This command might take some time to complete, depending on your system's performance.)*
 
-## Features
+### 3. Serving the Web Application
 
-- **High Accuracy Predictions**: Trained on 50k+ diamond samples
-- Automated tuning with Optuna
-- **Low latency Inference**: prediction latency
-- **Interactive Web UI**
-- **RESTful APIs** 
-- **Production-ready API with FastAPI**
+After preprocessing and training, you can serve the FastAPI web application.
+
+  **Start the server**
+
+  ```bash
+  fastapi run app/main.py
+  ```
+  You should see output indicating that the Uvicorn server is running.
+
+  Navigate to [http://0.0.0.0:8000](http://0.0.0.0:8000) in your web browser. You will see the interactive Diamond Price Predictor interface.
+
+### 4. Tuning (Optional)
+
+To find optimal hyperparameters for the TabNet model:
+```bash
+gemai tune tabnet
+```
+*(This can be a time-consuming process. needs a gpu)*
+
+## 📊 Showcasing Results
+
+### Autogluon Models
+
+Results from Autogluon model training (if used or run separately) can be found in the `leaderboard.csv` file:
+- `Logs/Autogluon/leaderboard.csv`
+
+### TabNet Models
+
+(Leave space here, user will add content for TabNet results)
 
 ## 🧠 Tech Stack
 
 | Component       | Technology                                                                 |
 |-----------------|----------------------------------------------------------------------------|
-| **Core Model**  | ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?logo=pytorch&logoColor=white) [TabNet](https://github.com/dreamquark-ai/tabnet) |
+| **Core Model**  | ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?logo=pytorch&logoColor=white)  <a href="https://github.com/autogluon/autogluon"><img src="https://user-images.githubusercontent.com/16392542/77208906-224aa500-6aba-11ea-96bd-e81806074030.png" height="13" alt="AutoGluon"> </a>[TabNet](https://github.com/dreamquark-ai/tabnet) |
 | **Optimization**| ![Optuna](https://img.shields.io/badge/Optuna-2C3E50?logo=optuna&logoColor=white) |
 | **API**         | ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white) |
 | **Frontend**    | ![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black) ![Jinja2](https://img.shields.io/badge/Jinja2-B41717?logo=jinja&logoColor=white) |
-| **Packaging**   | ![Pydantic](https://img.shields.io/badge/Pydantic-92000F?logo=pydantic&logoColor=white) ![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white) |
-| **Data Source** | ![Kaggle](https://img.shields.io/badge/Kaggle-20BEFF?logo=kaggle&logoColor=white) Diamonds Dataset |
-
-## 📊 Exploratory Data Analysis
-
-Comprehensive analysis of diamond features and their relationships:
-
-[![Open EDA Notebook](./notebooks/pairplot.png)](./notebooks/EDA.ipynb)
-
-*Click image to view full analysis notebook*
-
-## 📁 Project Structure
-
-The project has been refactored for better organization, maintainability, and a CLI-first workflow.
-
-```
-/
-├── app/                  # FastAPI application for serving the model
-├── configs/              # All configuration files (e.g., config.toml)
-├── data/                 # Data storage
-│   ├── raw/              # Raw, immutable datasets
-│   └── processed/        # Cleaned and processed datasets
-├── models/               # Saved model artifacts and preprocessing mappings
-├── notebooks/            # Jupyter notebooks for exploration and analysis
-├── src/                  # Source code for the project
-│   └── GemAI/            # Main Python package for GemAI
-│       ├── config.py     # Centralized configuration loading
-│       ├── data.py       # Data loading utilities
-│       ├── main.py       # Main Command Line Interface (CLI) entry point
-│       ├── utils.py      # General utility functions (e.g., logging)
-│       └── models/       # Package for model-related modules
-│           ├── autogluon.py  # AutoGluon training logic
-│           └── tabnet.py     # TabNet training and tuning logic
-├── tests/                # Unit and integration tests
-├── pyproject.toml        # Project metadata and dependencies (managed by uv)
-└── README.md             # This file
-```
-
-## ⚙️ Workflow and Usage
-
-This project is managed via a centralized command-line interface (CLI). The recommended workflow is outlined below.
-
-### 1. Setup
-
-First, clone the repository and install the required dependencies using `uv`.
-
-```bash
-# Clone the repository
-git clone https://github.com/your-username/GemAI.git
-cd GemAI
-
-# Install main and development dependencies using uv
-# (Ensure uv is installed: pip install uv)
-uv install .[dev]
-```
-
-### 2. Data Preprocessing
-
-Generate the cleaned dataset from the raw `diamonds.csv` file. This script will perform all the cleaning steps from the EDA notebook and save the output to `data/processed/clean_ds.plk`.
-
-```bash
-uv run python -m src.GemAI.main process-data
-```
-
-### 3. Hyperparameter Tuning (Optional but Recommended)
-
-Run Optuna to find the best hyperparameters for the TabNet model. The results will be saved back into `configs/config.toml` for the training step.
-
-```bash
-uv run python -m src.GemAI.main tune tabnet
-```
-
-### 4. Model Training
-
-Train the model using the hyperparameters from your configuration file.
-
-```bash
-# To train the TabNet model (uses parameters from tune step)
-uv run python -m src.GemAI.main train tabnet
-
-# To train the AutoGluon model
-uv run python -m src.GemAI.main train autogluon
-```
-The trained TabNet model and its preprocessing mappings will be saved in the `models/tabnet/` directory.
-
-### 5. Serving the Prediction API
-
-Launch the FastAPI application to serve predictions. The API uses the latest trained TabNet model from the previous step.
-
-```bash
-uv run python -m src.GemAI.main serve
-```
-- The API will be available at `http://localhost:8000`.
-- The interactive web GUI is at `/`.
-- The interactive API documentation (Swagger UI) is at `/docs`.
-
-### 6. Testing the API
-
-The project includes a set of API tests. These tests require the server to be running in a separate terminal.
-
-```bash
-# In one terminal, start the server:
-uv run python -m src.GemAI.main serve
-
-# In another terminal, run pytest:
-uv run pytest
-```
-
-### API Request Example
-
-You can interact with the running API using `curl` or any HTTP client.
-
-```bash
-curl -X POST "http://localhost:8000/predict" \
--H "Content-Type: application/json" \
--d '{
-    "carat": 0.75,
-    "cut": "Ideal",
-    "color": "D",
-    "clarity": "IF",
-    "depth": 62.1,
-    "table": 57,
-    "x": 5.71,
-    "y": 5.73,
-    "z": 3.55
-}'
-```
-**Expected Response:**
-```json
-{
-  "price_bwp": 12345.67
-}
-```
-*(The price is an example and will vary based on the trained model.)*
-
-
+| **Packaging**   | ![Pydantic](https://img.shields.io/badge/Pydantic-92000F?logo=pydantic&logoColor=white) |
+| **Diamonds Dataset** | ![Kaggle](https://img.shields.io/badge/Kaggle-20BEFF?logo=kaggle&logoColor=white)  |

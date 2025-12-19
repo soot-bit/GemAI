@@ -3,36 +3,58 @@ document.getElementById("predictionForm").addEventListener("submit", async funct
 
     const loader = document.getElementById("loader");
     const resultCard = document.getElementById("result");
+    const predictButton = this.querySelector("button[type='submit']");
 
-    // Show loader and hide previous result
+    // Disable button and show loader
+    predictButton.disabled = true;
     loader.style.display = "block";
     resultCard.style.display = "none";
 
-    const data = {
-        carat: parseFloat(document.getElementById("carat").value),
-        cut: parseInt(document.getElementById("cut").value),
-        color: parseInt(document.getElementById("color").value),
-        clarity: parseInt(document.getElementById("clarity").value),
-        depth: parseFloat(document.getElementById("depth").value),
-        table: parseFloat(document.getElementById("table").value),
-        x: parseFloat(document.getElementById("x").value),
-        y: parseFloat(document.getElementById("y").value),
-        z: parseFloat(document.getElementById("z").value)
+    // Helper to get element value or default
+    const getValue = (id, isNumeric = false) => {
+        const element = document.getElementById(id);
+        if (!element) {
+            console.error(`Element with id '${id}' not found.`);
+            return isNumeric ? 0 : "";
+        }
+        const value = element.value || "";
+        return isNumeric ? parseFloat(value) : value;
     };
+
+    const data = {
+        carat: getValue("carat", true),
+        cut: getValue("cut"),
+        color: getValue("color"),
+        clarity: getValue("clarity"),
+        depth: getValue("depth", true),
+        table: getValue("table", true),
+        x: getValue("x", true),
+        y: getValue("y", true),
+        z: getValue("z", true),
+    };
+
+    // Artificial delay to ensure loader is visible
+    await new Promise(resolve => setTimeout(resolve, 500));
 
     try {
         const response = await fetch("/predict", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
         });
 
-        // Hide loader
-        loader.style.display = "none";
-
         if (!response.ok) {
-            const error = await response.text();
-            resultCard.innerHTML = `<p style="color: red;">Error: ${error}</p>`;
+            const errorData = await response.json();
+            const suggestion = errorData.suggestion
+                ? `<p><strong>Suggestion:</strong> ${errorData.suggestion}</p>`
+                : "";
+            resultCard.innerHTML = `
+                <div class="error-card">
+                    <h2>⚠️ Error: ${errorData.error_type}</h2>
+                    <p>${errorData.message}</p>
+                    ${suggestion}
+                </div>
+            `;
             resultCard.style.display = "block";
             return;
         }
@@ -44,7 +66,7 @@ document.getElementById("predictionForm").addEventListener("submit", async funct
                 style: "currency",
                 currency: currency,
                 minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                maximumFractionDigits: 2,
             });
         }
 
@@ -53,14 +75,23 @@ document.getElementById("predictionForm").addEventListener("submit", async funct
             <p><strong>USD:</strong> ${formatCurrency(result.price_usd, "USD")}</p>
             <p><strong>BWP:</strong> P ${result.price_bwp.toLocaleString(undefined, {
                 minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                maximumFractionDigits: 2,
             })}</p>
         `;
         resultCard.style.display = "block";
 
     } catch (err) {
-        loader.style.display = "none";
-        resultCard.innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
+        resultCard.innerHTML = `
+            <div class="error-card">
+                <h2>⚠️ An Unexpected Error Occurred</h2>
+                <p>${err.message}</p>
+                <p><strong>Suggestion:</strong> Please check your network connection or contact support.</p>
+            </div>
+        `;
         resultCard.style.display = "block";
+    } finally {
+        // Re-enable button and hide loader
+        predictButton.disabled = false;
+        loader.style.display = "none";
     }
 });

@@ -13,29 +13,29 @@ log_dir = "Logs"
 random_state = 42
 
 [autogluon]
-time_limit = 60
+time_limit = 600
 dir = "Autogluon"
 
 [tabnet]
-max_epochs = 10
+max_epochs = 5
 patience = 10
 batch_size = 1024
 virtual_batch_size = 128
 dir = "Tabnet"
 
 [optuna]
-n_trials = 50
-timeout = 3600
+n_trials = 5
+timeout = 360
 
 [tabnet.initial_params]
-n_d = 20
-n_a = 12
-n_steps = 10
-gamma = 1.0424030394886583
-lambda_sparse = 8.850232060121019e-5
+n_d = 16
+n_a = 32
+n_steps = 8
+gamma = 1.5986584841970366
+lambda_sparse = 2.9380279387035354e-6
 
 [tabnet.initial_params.optimizer_params]
-lr = 0.029575984820183254
+lr = 0.0806234057607385
 weight_decay = 1e-5
 
 [tabnet.initial_params.scheduler_params]

@@ -112,7 +112,7 @@ def prepare_tabnet_data(train_df: pd.DataFrame, val_df: pd.DataFrame) -> tuple:
         # Ensure categories are consistent and get codes
         train_categories = X_train[col].cat.categories
         cat_dtype = pd.CategoricalDtype(categories=train_categories, ordered=True)
-        cat_mappings[col] = cat_dtype
+        cat_mappings[col] = {category: i for i, category in enumerate(train_categories)} # FIX
 
         # Convert to codes here
         X_train[col] = X_train[col].astype(cat_dtype).cat.codes

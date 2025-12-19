@@ -36,6 +36,8 @@ def run_training(params: dict):
     )
 
     model_dir = get_project_root() / config.paths.log_dir / config.tabnet.dir
+    model_dir.mkdir(parents=True, exist_ok=True)  # Ensure the directory exists
+    model.save_model(str(model_dir / "tabnet_model"))
     utils.log_rule("TABNET TRAINING COMPLETED")
     utils.log_info(f"Model saved to {model_dir / 'tabnet_model.zip'}")
 

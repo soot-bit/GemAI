@@ -1,0 +1,7 @@
+<svg width="150" height="100" viewBox="0 0 150 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="150" height="100" fill="#e0e0e0"/>
+  <text x="75" y="55" font-family="Arial" font-size="16" fill="#333" text-anchor="middle">Diamond Cut</text>
+  <line x1="20" y1="80" x2="130" y2="80" stroke="#666" stroke-width="2"/>
+  <line x1="20" y1="80" x2="75" y2="20" stroke="#666" stroke-width="2"/>
+  <line x1="130" y1="80" x2="75" y2="20" stroke="#666" stroke-width="2"/>
+</svg>

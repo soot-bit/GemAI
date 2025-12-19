@@ -13,6 +13,7 @@ def main():
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     # --- Data Command ---
+    process_data_parser = subparsers.add_parser("process-data", help="Run the data preprocessing pipeline")
 
 
     # --- Training Command ---
@@ -24,10 +25,6 @@ def main():
     # --- Tuning Command ---
     tune_parser = subparsers.add_parser("tune", help="Hyperparameter tune a model")
     tune_parser.add_argument("model", choices=["tabnet"], help="Model to tune")
-
-    # --- Serving Command ---
-
-    # No arguments needed for serve yet, but could add --host, --port etc.
 
     args = parser.parse_args()
 
@@ -47,18 +44,6 @@ def main():
     elif args.command == "tune":
         if args.model == "tabnet":
             tabnet.run_tuning()
-
-    elif args.command == "serve":
-        # To avoid making uvicorn a direct dependency, we run it as a shell command.
-        # This is more flexible for a CLI tool.
-        import os
-        from .config import get_project_root
-
-        app_dir = get_project_root() / "app"
-        os.chdir(app_dir)  # uvicorn needs to be run from the app's directory
-
-        print("Starting FastAPI server... (uvicorn main:app --reload)")
-        os.system("uvicorn main:app --reload --host 0.0.0.0 --port 8000")
 
 
 if __name__ == "__main__":
