@@ -5,22 +5,25 @@ from typing import Dict, Any, List
 
 # --- Pydantic Models for Config Structure ---
 
+
 class Paths(BaseModel):
-    data_dir: str = 'data'
-    raw_data: str = 'data/raw/diamonds.csv'
-    processed_data: str = 'data/processed/clean_ds.plk'
-    model_dir: str = 'models'
-    autogluon_dir: str = 'models/autogluon'
-    tabnet_dir: str = 'models/tabnet'
+    data_dir: str = "Data"
+    raw_data: str = "diamonds.csv"
+    processed_data: str = "clean_ds.plk"
+    model_dir: str = "Models"
+    autogluon_dir: str = "AGluon"
+    tabnet_dir: str = "Tabnet"
+
 
 class Data(BaseModel):
     target: str
-    problem_type: str
     categorical_features: List[str]
     numerical_features: List[str]
 
+
 class Training(BaseModel):
     random_state: int
+
 
 class TabnetParams(BaseModel):
     n_d: int
@@ -31,6 +34,7 @@ class TabnetParams(BaseModel):
     optimizer_params: Dict[str, Any]
     scheduler_params: Dict[str, Any]
 
+
 class TabnetSettings(BaseModel):
     max_epochs: int
     patience: int
@@ -38,14 +42,15 @@ class TabnetSettings(BaseModel):
     virtual_batch_size: int
     initial_params: TabnetParams
 
+
 class OptunaSettings(BaseModel):
     n_trials: int
     timeout: int
 
+
 class AutogluonSettings(BaseModel):
     time_limit: int
-    preset: str
-    eval_metric: str
+
 
 class Settings(BaseModel):
     paths: Paths = Field(default_factory=Paths)
@@ -55,11 +60,11 @@ class Settings(BaseModel):
     autogluon: AutogluonSettings
     optuna: OptunaSettings
 
-# --- Config Loading ---
 
+# --- Config Loading ---
 def get_project_root() -> Path:
-    """Returns the project root directory."""
     return Path(__file__).resolve().parent.parent.parent
+
 
 def load_config() -> Settings:
     """Loads the config.toml file and returns a Settings object."""
@@ -69,5 +74,6 @@ def load_config() -> Settings:
     config_data = toml.load(config_path)
     return Settings(**config_data)
 
-# Load the config once and make it available for import across the project
-settings = load_config()  
+
+# Load the config once and make it available
+settings = load_config()
