@@ -196,3 +196,5 @@ cython_debug/
 ## my stuff
 *.log
 
+# Ignore Autogluon models directory
+Logs/Autogluon/models/
