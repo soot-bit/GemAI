@@ -7,8 +7,13 @@
   <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
+  <nav class="navbar">
+    <img src="/static/images/icon.png" alt="Diamond Icon" class="nav-icon">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/info" class="nav-link">Info</a>
+  </nav>
   <main>
-    <h1>💎 Diamond Price Predictor</h1>
+    <h1>Predictor</h1>
     <div class="content-wrapper">
       <div class="container">
         <form id="predictionForm">
@@ -95,9 +100,13 @@
       <div id="loader" class="loader" style="display: none;"></div>
       <div id="result" class="result-card" style="display: none;"></div>
     </div>
-    <div class="main-image-container">
+    <div class="main-image-container" id="mainImageWrapper">
         <img src="https://i.pinimg.com/736x/ee/20/82/ee208232377a87b77968813534eb707a.jpg" alt="Diamond Features Example" class="main-diamond-image">
     </div>
+    </div>
+    <div id="imageModal" class="modal">
+        <span class="close-btn" id="closeModalBtn">&times;</span>
+        <img class="modal-content" id="modalImage">
     </div>
     <script src="/static/script.js"></script>
   </main>

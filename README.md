@@ -1,8 +1,8 @@
 <div align="center">
 <h1 style="display: flex; align-items: center; gap: 10px;">
-  <img src="https://4vector.com/i/free-vector-diamant-diamond_100183_Diamant_diamond.png" alt="Diamond icon" style="width: 40px; height: 40px;">
-  GemAI - Diamond Price Predictor
+  <img src="./app/static/images/icon.png" alt="Diamond icon" style="width: 1000px; height: 300px;">
 </h1>
+<h2>A Diamond Price Predictor</h2>
 <p>An end-to-end solution for diamond price prediction using deep learning on tabular data, featuring a modern web interface and robust API.</p>
 
   <img src="https://img.shields.io/badge/Predictor-Diamonds-blueviolet" />
@@ -116,6 +116,17 @@ After preprocessing and training, you can serve the FastAPI web application.
 
   Navigate to [http://0.0.0.0:8000](http://0.0.0.0:8000) in your web browser. You will see the interactive Diamond Price Predictor interface.
 
+  <table>
+  <tr>
+    <td><img src="app/static/images/predictor.png" width="400"></td>
+    <td><img src="app/static/images/info.png" width="390"></td>
+  </tr>
+  <tr>
+    <td align="center">Predictor Interface</td>
+    <td align="center">Info Panel</td>
+  </tr>
+</table>
+
 ### 4. Tuning (Optional)
 
 To find optimal hyperparameters for the TabNet model:
@@ -124,12 +135,28 @@ gemai tune tabnet
 ```
 *(This can be a time-consuming process. needs a gpu)*
 
-## 📊 Showcasing Results
+## 📊  Results
 
-### Autogluon Models
+### Classical Models
 
-Results from Autogluon model training (if used or run separately) can be found in the `leaderboard.csv` file:
-- `Logs/Autogluon/leaderboard.csv`
+Results from Autogluon model training are in the [`leaderboard.csv`](Logs/Autogluon/leaderboard_parallel.csv) file, scored on rmse.
+
+
+| Model                | Score Test | Score Val |   
+|----------------------|------------|-----------|
+| WeightedEnsemble_L2  | 6697.13    | 6280.38   |
+| CatBoost             | 6758.99    | 6568.60   |
+| LightGBMXT           | 6864.41    | 6506.51   |
+| LightGBM             | 6893.93    | 6526.96   |
+| LightGBMLarge        | 6956.74    | 6482.68   |
+| ExtraTreesMSE        | 7005.29    | 6565.60   |
+| XGBoost              | 7034.49    | 6549.60   |
+| RandomForestMSE      | 7236.60    | 6716.59   |
+| NeuralNetFastAI      | 7530.73    | 7239.99   |
+| NeuralNetTorch       | 7685.42    | 7653.63   |
+
+
+
 
 ### TabNet Models
 

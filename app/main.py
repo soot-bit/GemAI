@@ -67,6 +67,10 @@ def transform_cats(in_df: pd.DataFrame, cat_maps: Dict[str, Dict[str, int]]) -> 
 def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
+@app.get("/info", response_class=HTMLResponse)
+def info(request: Request):
+    return templates.TemplateResponse("info.html", {"request": request})
+
 @app.post("/predict", response_model=Prediction)
 def predict(data: Diamond):
     if not model or not mappings:

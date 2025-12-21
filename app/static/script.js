@@ -33,7 +33,7 @@ document.getElementById("predictionForm").addEventListener("submit", async funct
         z: getValue("z", true),
     };
 
-    // Artificial delay to ensure loader is visible
+    //  delay 
     await new Promise(resolve => setTimeout(resolve, 500));
 
     try {
@@ -95,3 +95,28 @@ document.getElementById("predictionForm").addEventListener("submit", async funct
         loader.style.display = "none";
     }
 });
+
+
+// --- Image Modal Functionality ---
+const mainImageWrapper = document.getElementById("mainImageWrapper");
+const mainDiamondImage = mainImageWrapper.querySelector(".main-diamond-image");
+const imageModal = document.getElementById("imageModal");
+const modalImage = document.getElementById("modalImage");
+const closeModalBtn = document.getElementById("closeModalBtn");
+
+if (mainImageWrapper && mainDiamondImage && imageModal && modalImage && closeModalBtn) {
+    mainImageWrapper.addEventListener("click", () => {
+        modalImage.src = mainDiamondImage.src;
+        imageModal.style.display = "block";
+    });
+
+    closeModalBtn.addEventListener("click", () => {
+        imageModal.style.display = "none";
+    });
+
+    imageModal.addEventListener("click", (event) => {
+        if (event.target === imageModal) {
+            imageModal.style.display = "none";
+        }
+    });
+}

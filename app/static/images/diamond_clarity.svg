@@ -1,7 +1,0 @@
-<svg width="150" height="100" viewBox="0 0 150 100" xmlns="http://www.w3.org/2000/svg">
-  <rect width="150" height="100" fill="#e0e0e0"/>
-  <text x="75" y="55" font-family="Arial" font-size="16" fill="#333" text-anchor="middle">Diamond Clarity</text>
-  <circle cx="75" cy="50" r="20" stroke="#666" stroke-width="2" fill="none"/>
-  <circle cx="65" cy="40" r="3" fill="#666"/>
-  <line x1="80" y1="60" x2="90" y2="70" stroke="#666" stroke-width="1"/>
-</svg>

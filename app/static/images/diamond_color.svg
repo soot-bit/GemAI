@@ -1,8 +1,0 @@
-<svg width="150" height="100" viewBox="0 0 150 100" xmlns="http://www.w3.org/2000/svg">
-  <rect width="150" height="100" fill="#e0e0e0"/>
-  <text x="75" y="55" font-family="Arial" font-size="16" fill="#333" text-anchor="middle">Diamond Color</text>
-  <rect x="10" y="70" width="25" height="15" fill="#f0f0f0" stroke="#999"/>
-  <rect x="40" y="70" width="25" height="15" fill="#e0e0e0" stroke="#999"/>
-  <rect x="70" y="70" width="25" height="15" fill="#d0d0d0" stroke="#999"/>
-  <rect x="100" y="70" width="25" height="15" fill="#c0c0c0" stroke="#999"/>
-</svg>
