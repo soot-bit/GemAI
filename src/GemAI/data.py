@@ -20,8 +20,7 @@ def run_preprocessing():
     # 1. Load raw data
     raw_data_path = get_project_root() / config.paths.raw_data
     df = pd.read_csv(raw_data_path)
-    if "Unnamed: 0" in df.columns:
-        df = df.drop(columns="Unnamed: 0")
+    df = df.drop(columns="Unnamed: 0")
     utils.log_info(f"Loaded raw data with shape: {df.shape}")
 
     # 2. Basic feature engineering and type conversion
@@ -112,7 +111,9 @@ def prepare_tabnet_data(train_df: pd.DataFrame, val_df: pd.DataFrame) -> tuple:
         # Ensure categories are consistent and get codes
         train_categories = X_train[col].cat.categories
         cat_dtype = pd.CategoricalDtype(categories=train_categories, ordered=True)
-        cat_mappings[col] = {category: i for i, category in enumerate(train_categories)} # FIX
+        cat_mappings[col] = {
+            category: i for i, category in enumerate(train_categories)
+        }  # FIX
 
         # Convert to codes here
         X_train[col] = X_train[col].astype(cat_dtype).cat.codes

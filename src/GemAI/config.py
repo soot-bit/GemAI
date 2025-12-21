@@ -48,7 +48,7 @@ class OptunaConfig(BaseModel):
 
 
 class AutogluonConfig(BaseModel):
-    time_limit: int
+    time_limit: int | None = None
     dir: str
 
 
