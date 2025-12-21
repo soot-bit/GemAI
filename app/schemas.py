@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class DiamondInput(BaseModel):
+class Diamond(BaseModel):
     carat: float
     cut: str
     color: str
@@ -13,6 +13,6 @@ class DiamondInput(BaseModel):
     z: float
 
 
-class PredictResponse(BaseModel):
-    price_bwp: float
-    price_usd: float
+class Prediction(BaseModel):
+    bwp: float
+    usd: float

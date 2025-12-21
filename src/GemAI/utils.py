@@ -9,15 +9,6 @@ from .config import config, get_project_root  # Import config
 BASE_DIR = get_project_root()
 
 
-def get_path(file="Data"):
-    return BASE_DIR / file
-
-
-def unpickle(file):
-    path = get_path(file)
-    with open(path, "rb") as f:
-        data = pickle.load(f)
-    return data
 
 
 # Initialize Rich Console with a custom theme
@@ -26,7 +17,7 @@ console = Console(theme=custom_theme)
 
 
 def _setup_logging():
-    log_dir = BASE_DIR / config.paths.log_dir
+    log_dir = BASE_DIR / config.dir.logs
     log_dir.mkdir(parents=True, exist_ok=True)
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -56,11 +47,11 @@ def _setup_logging():
 logger, log_file = _setup_logging()
 
 
-def log_rule(title: str):
+def log_header(title: str):
     """Prints a console rule with the given title."""
     console.rule(f"[bold blue]{title}[/bold blue]")
 
 
-def log_info(message: str):
+def log(message: str):
     """Prints an info message to the console using the Rich logger."""
     logger.info(message)

@@ -1,44 +1,44 @@
 [data]
 target = "price_bwp"
-categorical_features = [ "cut", "color", "clarity",]
-numerical_features = [ "carat", "depth", "table", "volume",]
+cat_feats = [ "cut", "color", "clarity",]
+num_feats = [ "carat", "depth", "table", "volume",]
+raw = "diamonds.csv"
+processed = "clean_ds.pkl"
 
-[paths]
-dir = "Data"
-raw_data = "diamonds.csv"
-processed_data = "clean_ds.plk"
-log_dir = "Logs"
+[dir]
+data = "Data"
+logs = "Logs"
+autogluon = "Autogluon"
+tabnet = "Tabnet"
 
 [training]
-random_state = 42
+seed = 42
 
 [autogluon]
-time_limit = 66600
-dir = "Autogluon"
+timeout = 66600
 
 [tabnet]
-max_epochs = 50
+epochs = 50
 patience = 10
 batch_size = 1024
-virtual_batch_size = 128
-dir = "Tabnet"
+vbatch_size = 128
 
 [optuna]
-n_trials = 50
+trials = 50
 timeout = 36000
 
-[tabnet.initial_params]
+[tabnet.params]
 n_d = 28
 n_a = 12
 n_steps = 5
 gamma = 1.1242486011659727
 lambda_sparse = 3.330238156087226e-5
 
-[tabnet.initial_params.optimizer_params]
+[tabnet.params.opt_params]
 lr = 0.05147747236116987
 weight_decay = 1e-5
 
-[tabnet.initial_params.scheduler_params]
+[tabnet.params.sched_params]
 patience = 10
 factor = 0.5
 scheduler_fn = "torch.optim.lr_scheduler.ReduceLROnPlateau"

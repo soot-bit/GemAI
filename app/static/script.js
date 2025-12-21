@@ -72,8 +72,8 @@ document.getElementById("predictionForm").addEventListener("submit", async funct
 
         resultCard.innerHTML = `
             <h2>💎 Predicted Price</h2>
-            <p><strong>USD:</strong> ${formatCurrency(result.price_usd, "USD")}</p>
-            <p><strong>BWP:</strong> P ${result.price_bwp.toLocaleString(undefined, {
+            <p><strong>USD:</strong> ${formatCurrency(result.usd, "USD")}</p>
+            <p><strong>BWP:</strong> P ${result.bwp.toLocaleString(undefined, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
             })}</p>
