@@ -159,8 +159,7 @@ Results from Autogluon model training are in the [`leaderboard.csv`](Logs/Autogl
 
 
 ### TabNet Models
-
-(Leave space here, user will add content for TabNet results)
+...
 
 ## 🧠 Tech Stack
 
