@@ -70,7 +70,7 @@ This project uses `uv` for dependency management, which is a fast and modern Pyt
     ```bash
     uv sync
     source .venv/bin/activate 
-    <!-- uv pip install -e . # add 'gemai" module -->
+    uv pip install -e . # add 'gemai" module
     ```
 
 3.  **Verify `gemai` CLI:**
