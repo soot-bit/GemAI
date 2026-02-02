@@ -36,7 +36,7 @@ I'd say TabNet  is a not as good as good-old traditional ML for this kind of tas
 
 - **High Accuracy Predictions**: Trained on 50K samples + Low latency Inference via fastapi API build.
 - Automated hyperparameter tuning with Optuna.
-- **Web UI**: Modern, responsive, and user-friendly interface for predictions.
+- **Web UI & TUI** in case you don’t like the terminal. Serve yourself. Bon appétit. and theres a small tab description of diamond stuff
 - **Clear Feature Descriptions**: Tooltips provide detailed explanations for each input parameter.
 
 
@@ -60,7 +60,7 @@ This project uses `uv` for dependency management, which is a fast and modern Pyt
 
 1.  **Clone**
     ```bash
-    git clone https://github.com/your-repo/GemAI.git
+    git clone https://github.com/soot-bit/GemAI.git
     cd GemAI
     ```
 
