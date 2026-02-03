@@ -21,7 +21,8 @@ def train_tn(params: dict):
     )
     utils.log("Data prepared.")
 
-    model = TabNetRegressor(cat_idxs=cat_ixs, cat_dims=cat_ds, **params)
+    opt_params = params.pop("opt_params", {})
+    model = TabNetRegressor(cat_idxs=cat_ixs, cat_dims=cat_ds, optimizer_params=opt_params, **params)
 
     model.fit(
         X_train=X_trn,
