@@ -28,6 +28,7 @@ document.getElementById("predictionForm").addEventListener("submit", async funct
         clarity: getValue("clarity"),
         depth: getValue("depth", true),
         table: getValue("table", true),
+        price: getValue("price", true),
         x: getValue("x", true),
         y: getValue("y", true),
         z: getValue("z", true),
@@ -37,7 +38,7 @@ document.getElementById("predictionForm").addEventListener("submit", async funct
     await new Promise(resolve => setTimeout(resolve, 500));
 
     try {
-        const response = await fetch("/predict", {
+        const response = await fetch("/api/predict", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
@@ -45,14 +46,11 @@ document.getElementById("predictionForm").addEventListener("submit", async funct
 
         if (!response.ok) {
             const errorData = await response.json();
-            const suggestion = errorData.suggestion
-                ? `<p><strong>Suggestion:</strong> ${errorData.suggestion}</p>`
-                : "";
+            const errorMessage = errorData?.detail || errorData?.message || "Request failed";
             resultCard.innerHTML = `
                 <div class="error-card">
-                    <h2>⚠️ Error: ${errorData.error_type}</h2>
-                    <p>${errorData.message}</p>
-                    ${suggestion}
+                    <h2>⚠️ Error</h2>
+                    <p>${errorMessage}</p>
                 </div>
             `;
             resultCard.style.display = "block";
@@ -95,7 +93,6 @@ document.getElementById("predictionForm").addEventListener("submit", async funct
         loader.style.display = "none";
     }
 });
-
 
 // --- Image Modal Functionality ---
 const mainImageWrapper = document.getElementById("mainImageWrapper");

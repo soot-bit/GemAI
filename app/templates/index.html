@@ -77,6 +77,12 @@
         </div>
 
         <div class="form-group">
+          <label for="price">Reference Price:</label>
+          <input type="number" id="price" step="0.01" value="3000" required>
+          <div class="info-icon"><span>?</span><div class="tooltip-content">This model artifact was trained with price as an input feature. Provide a market reference price.</div></div>
+        </div>
+
+        <div class="form-group">
           <label for="x">X (Length in mm):</label>
           <input type="number" id="x" step="0.01" value="5.7" required>
           <div class="info-icon"><span>?</span><div class="tooltip-content">Length of the diamond in millimeters.</div></div>

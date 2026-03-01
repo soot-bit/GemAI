@@ -3,10 +3,41 @@ import optuna
 import torch
 from pytorch_tabnet.tab_model import TabNetRegressor
 import toml
+import matplotlib.pyplot as plt
 
 from ..config import config, get_project_root
 from ..data import load_data, prep_tn_data
 from .. import utils
+
+
+def _plot_metrics(history, mdl_dir, metric_name="rmse"):
+    """Plots train and validation metrics (RMSE and loss) and saves to file."""
+    plt.figure(figsize=(12, 5))
+
+    # Plot RMSE
+    plt.subplot(1, 2, 1)
+    plt.plot(history.history[metric_name], label=f"Train {metric_name.upper()}")
+    plt.plot(history.history[f"val_{metric_name}"], label=f"Validation {metric_name.upper()}")
+    plt.title(f"Train vs Validation {metric_name.upper()}")
+    plt.xlabel("Epochs")
+    plt.ylabel(f"{metric_name.upper()}")
+    plt.legend()
+    plt.grid(True)
+
+    # Plot Loss
+    plt.subplot(1, 2, 2)
+    plt.plot(history.history["loss"], label="Train Loss")
+    plt.plot(history.history["val_loss"], label="Validation Loss")
+    plt.title("Train vs Validation Loss")
+    plt.xlabel("Epochs")
+    plt.ylabel("Loss")
+    plt.legend()
+    plt.grid(True)
+
+    plot_path = mdl_dir / "tabnet_metrics.png"
+    plt.savefig(plot_path)
+    plt.close() # Close the plot to prevent displaying it
+    utils.log(f"Metrics plot saved to {plot_path}")
 
 
 def train_tn(params: dict):
@@ -24,7 +55,7 @@ def train_tn(params: dict):
     opt_params = params.pop("opt_params", {})
     model = TabNetRegressor(cat_idxs=cat_ixs, cat_dims=cat_ds, optimizer_params=opt_params, **params)
 
-    model.fit(
+    history = model.fit(
         X_train=X_trn,
         y_train=y_trn,
         eval_set=[(X_val, y_val)],
@@ -38,6 +69,9 @@ def train_tn(params: dict):
 
     mdl_dir = get_project_root() / config.dir.logs / config.dir.tabnet
     mdl_dir.mkdir(parents=True, exist_ok=True)  # Ensure the directory exists
+
+    _plot_metrics(history, mdl_dir) # Call plotting function here
+
     model.save_model(str(mdl_dir / "tabnet_model"))
     utils.log_header("TABNET TRAINING COMPLETED")
     utils.log(f"Model saved to {mdl_dir / 'tabnet_model.zip'}")
